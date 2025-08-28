@@ -1,0 +1,6 @@
+
+编译
+cmake --build build --config Release 
+
+打包
+python setup.py bdist_wheel

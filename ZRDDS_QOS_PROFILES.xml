@@ -1,0 +1,38 @@
+<zrdds_qos xmlns="http://www.omg.org/dds/">
+  <qos_library name="default_lib">
+    <qos_profile name="default_profile">
+
+      <!-- 必须有 participantfactory_qos -->
+      <participantfactory_qos name="default_factory" />
+
+      <!-- 一个最简单的 participant -->
+      <participant_qos name="default_participant">
+        <discovery_config>
+          <participant_liveliness_assert_period>
+            <sec>3</sec>
+            <nanosec>0</nanosec>
+          </participant_liveliness_assert_period>
+          <participant_liveliness_lease_duration>
+            <sec>10</sec>
+            <nanosec>0</nanosec>
+          </participant_liveliness_lease_duration>
+        </discovery_config>
+      </participant_qos>
+
+      <!-- datawriter 配置 -->
+      <datawriter_qos name="default_writer">
+        <reliability>
+          <kind>RELIABLE_RELIABILITY_QOS</kind>
+        </reliability>
+      </datawriter_qos>
+
+      <!-- datareader 配置 -->
+      <datareader_qos name="default_reader">
+        <reliability>
+          <kind>RELIABLE_RELIABILITY_QOS</kind>
+        </reliability>
+      </datareader_qos>
+
+    </qos_profile>
+  </qos_library>
+</zrdds_qos>
