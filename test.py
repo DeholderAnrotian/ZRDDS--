@@ -1,7 +1,18 @@
-import zrpy
+import zrpy.zrdds_python as zrpy
 
-# print(dir(zrpy))
-# print(zrpy.add(8, 2))
+# if(zrpy.DomainParticipantFactory.get_instance() == None):
+#   print("get instance failed\n")
+# else:
+#   print("get instance success\n")
 
-factory = zrpy.get_participant_factory()
-print("工厂实例:", factory)
+# print(zrpy.DomainParticipantFactory.get_instance())
+# print(zrpy.DomainParticipantFactory.finalize_instance())
+
+factory = zrpy.DomainParticipantFactory.get_instance()
+print(factory)
+
+participant= factory.create_participant(0)
+print(participant)
+
+print(factory.delete_participant(participant))
+print(zrpy.DomainParticipantFactory.finalize_instance())

@@ -3,3 +3,6 @@
 /dist/
 /zrpy/__pycache__/
 /zrpy/zrdds_python.cp313-win_amd64.pyd
+/.vscode/
+/temptrash/
+

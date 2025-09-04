@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(ZRDDS_INCLUDE_DIR "$ENV{ZRDDS_HOME}/include")
 set(ZRDDS_LIB_DIR "$ENV{ZRDDS_HOME}/lib")
 set(pybind11_DIR ".venv/Lib/site-packages/pybind11/share/cmake/pybind11") 
+add_definitions(-DPYBIND11_DETAILED_ERROR_MESSAGES)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 REQUIRED)
