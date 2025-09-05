@@ -1,4 +1,4 @@
-import zrpy.zrdds_python as zrpy
+from build.Release import zrdds_python as zrpy
 
 # if(zrpy.DomainParticipantFactory.get_instance() == None):
 #   print("get instance failed\n")
@@ -10,8 +10,10 @@ import zrpy.zrdds_python as zrpy
 
 factory = zrpy.DomainParticipantFactory.get_instance()
 print(factory)
+# print(zrpy.Qos.DOMAINPARTICIPANT_QOS_DEFAULT)
+# help(factory.create_participant)
 
-participant= factory.create_participant(0)
+participant= factory.create_participant(0,zrpy.DomainParticipantQos.DOMAINPARTICIPANT_QOS_DEFAULT,zrpy.StatusKindMask.STATUS_MASK_NONE)
 print(participant)
 
 print(factory.delete_participant(participant))

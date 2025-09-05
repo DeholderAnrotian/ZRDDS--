@@ -3,7 +3,7 @@
 #include "DomainParticipantFactory.h"
 #include "DomainParticipantPy.h"
 #include "ReturnCode_t.h"
-#include "QosEnum.h"
+#include "DomainParticipantQosEnum.h"
 #include "StatusKindMaskEnum.h"
 #include <set>
 namespace py = pybind11;
@@ -19,7 +19,7 @@ public:
   static DDS::ReturnCode_t finalize_instance();
   // virtual DomainParticipantPy *create_participant(const unsigned int &domain_id);
   virtual DomainParticipantPy *create_participant(const unsigned int &domain_id,
-                                                  const QosEnum &qos,
+                                                  const DomainParticipantQosEnum &qos,
                                                   DDS::DomainParticipantListener *a_listener,
                                                   const StatusKindMaskEnum &mask);
 

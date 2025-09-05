@@ -1,3 +1,23 @@
-********************  2025-08-28 11:35:52:757  ********************
+********************  2025-09-05 09:53:15:693  ********************
 Current ZRDDS version(2.4.4-r2761701) for SEU was compiled at Aug 22 2025 16:10:38
+*******************************************************************
+********************  2025-09-05 09:53:15:695  ********************
+LOGINFO: LEVEL(ERROR)
+FUNC: QoSHelper.cpp:DomainParticipantQosValid(LINE: 135)
+discovery_config.participant_liveliness_assert_period(0 0) failed.
+*******************************************************************
+********************  2025-09-05 09:53:15:695  ********************
+LOGINFO: LEVEL(ERROR)
+FUNC: QoSHelper.cpp:DomainParticipantQosValid(LINE: 145)
+discovery_config.participant_liveliness_lease_duration(0 0) failed.
+*******************************************************************
+********************  2025-09-05 09:53:15:695  ********************
+LOGINFO: LEVEL(ERROR)
+FUNC: DomainParticipantFactoryImpl.cpp:DomainParticipantFactoryCreateParticipantNotEnabled(LINE: 1492)
+bad parameter: qoslist is invalid.
+*******************************************************************
+********************  2025-09-05 09:53:15:695  ********************
+LOGINFO: LEVEL(ERROR)
+FUNC: DomainParticipantFactoryCPlusPlusImpl.cpp:DDS::DomainParticipantFactoryCPlusPlusImpl::create_participant(LINE: 71)
+DomainParticipantFactoryCreateParticipantNotEnabled(5b4935f0, 0, 93cde5a0, 00000000, 0) failed.
 *******************************************************************
