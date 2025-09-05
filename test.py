@@ -13,7 +13,7 @@ print(factory)
 # print(zrpy.Qos.DOMAINPARTICIPANT_QOS_DEFAULT)
 # help(factory.create_participant)
 
-participant= factory.create_participant(0,zrpy.DomainParticipantQos.DOMAINPARTICIPANT_QOS_DEFAULT,zrpy.StatusKindMask.STATUS_MASK_NONE)
+participant= factory.create_participant(0,zrpy.DomainParticipantQos.getDefault(),zrpy.StatusKindMask.STATUS_MASK_NONE)
 print(participant)
 
 print(factory.delete_participant(participant))

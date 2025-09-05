@@ -26,11 +26,11 @@ DDS::ReturnCode_t DPFPy::finalize_instance()
 
 DPPy *DPFPy::create_participant(
     const unsigned int &domain_id,
-    const DomainParticipantQosEnum &qos,
-    DDS::DomainParticipantListener *a_listener,
+    const DPQPy &qos,
+    // DDS::DomainParticipantListener *a_listener,
     const StatusKindMaskEnum &mask)
 {
-  DDS::DomainParticipant *dp = dpf->create_participant(domain_id, getDomainParticipantQos(qos), a_listener, getMask(mask));
+  DDS::DomainParticipant *dp = dpf->create_participant(domain_id, *qos.raw(), nullptr, getMask(mask));
   DPPy *newDPPy = new DPPy(dp);
   DomainParticipants.insert(newDPPy);
   return newDPPy;
@@ -57,8 +57,8 @@ void init_DomainParticipantFactory(py::module_ &m)
       .def("create_participant",
            &DPFPy::create_participant,
            py::arg("domain_id"),
-           py::arg("qos") = DomainParticipantQosEnum::DOMAINPARTICIPANT_QOS_DEFAULT_ENUM,
-           py::arg("a_listener") = py::none(),
+           py::arg("qos") = DPQPy::getDefault(),
+           // py::arg("a_listener") = py::none(),
            py::arg("mask") = StatusKindMaskEnum::STATUS_MASK_NONE_ENUM,
            "Create a DomainParticipant with the given parameters")
       .def("delete_participant",
