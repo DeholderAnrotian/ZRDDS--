@@ -2,9 +2,10 @@
 #include "Aliases.h"
 #include <pybind11/pybind11.h>
 #include "DomainParticipantQosPy.h"
+
 namespace py = pybind11;
 
-DPQPy::DomainParticipantQosPy( DDS_DomainParticipantQos *intputDomainParticipantQos)
+DPQPy::DomainParticipantQosPy(DDS_DomainParticipantQos *intputDomainParticipantQos)
     : dpq(intputDomainParticipantQos) {}
 
 DPQPy::~DomainParticipantQosPy() {}

@@ -1,6 +1,6 @@
 #pragma once
 #include <pybind11/pybind11.h>
-#include <ZRDDSCppWrapper.h>
+#include "DefaultQos.h"
 #include <stdexcept>
 namespace py = pybind11;
 

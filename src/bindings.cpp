@@ -3,6 +3,9 @@
 #include "DomainParticipantPy.h"
 #include "DomainParticipantQosPy.h"
 #include "StatusKindMaskEnum.h"
+#include "TopicPy.h"
+#include "TopicQosPy.h"
+
 // #include "DomainParticipantQosPy.h"
 // #include "DomainParticipantListenerPy.h"
 namespace py = pybind11;
@@ -12,10 +15,13 @@ void init_ReturnCode_t(py::module_ &);
 PYBIND11_MODULE(zrdds_python, m)
 {
   init_DomainParticipantQos(m);
+  init_TopicQos(m);
   init_StatusKindMaskEnum(m);
   init_ReturnCode_t(m);
   init_DomainParticipantFactory(m);
   init_DomainParticipant(m);
+  init_Topic(m);
+  
   // init_DomainParticipantQos(m);
   // init_DomainParticipantListener(m);
 }
