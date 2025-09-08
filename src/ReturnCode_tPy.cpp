@@ -1,5 +1,4 @@
-﻿#pragma once
-#include <pybind11/pybind11.h>
+﻿#include <pybind11/pybind11.h>
 #include "ReturnCode_t.h"
 
 namespace py = pybind11;

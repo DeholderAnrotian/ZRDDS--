@@ -2,22 +2,32 @@
 #include "DomainParticipantPy.h"
 
 DPPy::DomainParticipantPy(DDS::DomainParticipant *intputDomainParticipant)
-    : dp(intputDomainParticipant) {}
+    : it(intputDomainParticipant) {}
 
 DPPy::~DomainParticipantPy() {}
 
-DDS::DomainParticipant *DPPy::raw() const { return dp; }
+DDS::DomainParticipant *DPPy::raw() const { return it; }
 
 TopicPy *DPPy::create_topic(const char *topic_name,
                             const char *type_name,
-                            const TopicQosPy &qoslist,
+                            const TQPy &qoslist,
                             // DDS::TopicListener *a_listener,
                             const StatusKindMaskEnum &mask)
 {
-  DDS::Topic *tp = dp->create_topic(topic_name, type_name, *qoslist.raw(), nullptr, getMask(mask));
+  DDS::Topic *tp = it->create_topic(topic_name, type_name, *qoslist.raw(), nullptr, getMask(mask));
   TopicPy *newTopicPy = new TopicPy(tp);
   Topics.insert(newTopicPy);
   return newTopicPy;
+}
+
+SubscriberPy *DPPy::create_subscriber(const SubscriberQosPy &qoslist,
+                                      // SubscriberListener *a_listener,
+                                      const StatusKindMaskEnum &mask)
+{
+  DDS::Subscriber *sub = it->create_subscriber(*qoslist.raw(), nullptr, getMask(mask));
+  SubscriberPy *newSubscriberPy = new SubscriberPy(sub);
+  Subscribers.insert(newSubscriberPy);
+  return newSubscriberPy;
 }
 
 DDS::ReturnCode_t DPPy::delete_contained_entities()
@@ -26,8 +36,13 @@ DDS::ReturnCode_t DPPy::delete_contained_entities()
   {
     delete topic;
   }
+  for (auto sub : Subscribers)
+  {
+    delete sub;
+  }
   Topics.clear();
-  return dp->delete_contained_entities();
+  Subscribers.clear();
+  return it->delete_contained_entities();
 }
 
 void init_DomainParticipant(py::module_ &m)
@@ -38,9 +53,10 @@ void init_DomainParticipant(py::module_ &m)
            &DPPy::create_topic,
            py::arg("topic_name"),
            py::arg("type_name"),
-           py::arg("qos") = TopicQosPy::getDefault(),
+           py::arg("qos"),
            // py::arg("a_listener") = py::none(),
-           py::arg("mask") = StatusKindMaskEnum::STATUS_MASK_NONE_ENUM,
+           py::arg("mask"),
            "Create a Topic")
+      .def("create_subscriber", &DPPy::create_subscriber, "Create a Subscriber")
       .def("delete_contained_entities", &DPPy::delete_contained_entities, "Delete all contained entities");
 }

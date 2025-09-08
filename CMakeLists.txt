@@ -25,6 +25,12 @@ pybind11_add_module(
 )
 
 target_link_libraries(zrdds_python PRIVATE ${ZRDDS_LIB_DIR}/ZRDDSCppz_VS2019.lib) 
+target_include_directories(zrdds_python PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(zrdds_python PRIVATE ${CMAKE_SOURCE_DIR}/src/QosPy)
+target_include_directories(zrdds_python PRIVATE ${CMAKE_SOURCE_DIR}/src/SeqPy)
+target_include_directories(zrdds_python PRIVATE ${CMAKE_SOURCE_DIR}/src/ListenerPy)
+target_include_directories(zrdds_python PRIVATE ${CMAKE_SOURCE_DIR}/src/Enum)
+
 target_include_directories(zrdds_python PRIVATE ${ZRDDS_INCLUDE_DIR}/CPlusPlusInterface)
 target_include_directories(zrdds_python PRIVATE ${ZRDDS_INCLUDE_DIR}/ZRDDSSecurityInterface)
 target_include_directories(zrdds_python PRIVATE ${ZRDDS_INCLUDE_DIR}/ZRDDSCoreInterface)

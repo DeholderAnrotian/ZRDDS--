@@ -1,18 +1,17 @@
-#pragma once
 #include "Aliases.h"
 #include "DomainParticipantFactoryPy.h"
 #include "ZRBuiltinTypesTypeSupport.h"
 
-namespace py = pybind11;
+DDS::DomainParticipantFactory *DPFPy::it = nullptr;
 
-DDS::DomainParticipantFactory *DPFPy::dpf = nullptr;
-std::set<DomainParticipantPy *> DPFPy::DomainParticipants;
+std::set<DPPy *> DPFPy::DomainParticipants;
+
 DPFPy::DomainParticipantFactoryPy()
 {
-  dpf = DDS::DomainParticipantFactory::get_instance();
+  it = DDS::DomainParticipantFactory::get_instance();
 }
 
-DPFPy::~DomainParticipantFactoryPy() {}
+DPFPy::~DPFPy() {}
 
 DPFPy *DPFPy::get_instance()
 {
@@ -22,7 +21,7 @@ DPFPy *DPFPy::get_instance()
 
 DDS::ReturnCode_t DPFPy::finalize_instance()
 {
-  return dpf->finalize_instance();
+  return it->finalize_instance();
 }
 
 DPPy *DPFPy::create_participant(const unsigned int &domain_id,
@@ -30,7 +29,7 @@ DPPy *DPFPy::create_participant(const unsigned int &domain_id,
                                 // DDS::DomainParticipantListener *a_listener,
                                 const StatusKindMaskEnum &mask)
 {
-  DDS::DomainParticipant *dp = dpf->create_participant(domain_id, *qoslist.raw(), nullptr, getMask(mask));
+  DDS::DomainParticipant *dp = it->create_participant(domain_id, *qoslist.raw(), nullptr, getMask(mask));
   DPPy *newDPPy = new DPPy(dp);
   DomainParticipants.insert(newDPPy);
   // 数据类型注册
@@ -55,7 +54,7 @@ DPPy *DPFPy::create_participant(const unsigned int &domain_id,
 
 DDS::ReturnCode_t DPFPy::delete_participant(DPPy *a_dp)
 {
-  DDS::ReturnCode_t returnCode = dpf->delete_participant(a_dp->raw());
+  DDS::ReturnCode_t returnCode = it->delete_participant(a_dp->raw());
   DomainParticipants.erase(a_dp);
   delete a_dp;
   return returnCode;
@@ -74,9 +73,9 @@ void init_DomainParticipantFactory(py::module_ &m)
       .def("create_participant",
            &DPFPy::create_participant,
            py::arg("domain_id"),
-           py::arg("qos") = DPQPy::getDefault(),
+           py::arg("qos"),
            // py::arg("a_listener") = py::none(),
-           py::arg("mask") = StatusKindMaskEnum::STATUS_MASK_NONE_ENUM,
+           py::arg("mask"),
            "Create a DomainParticipant with the given parameters")
       .def("delete_participant",
            &DPFPy::delete_participant,
