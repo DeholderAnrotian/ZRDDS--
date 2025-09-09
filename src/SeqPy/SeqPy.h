@@ -3,8 +3,41 @@
 #include "ZRSequence.h"
 #include "SampleInfo.h"
 #include "SeqWrapperMacro.h"
+class BooleanSeqPy
+{
+public:
+  BooleanSeqPy()
+  {
+    DDS_BooleanSeq_initialize(it);
+  }
+  explicit BooleanSeqPy(DDS_BooleanSeq *input) : it(input){}
+  ~BooleanSeqPy(){}
+  DDS_BooleanSeq *raw() const { return it; }
+  std::vector<DDS_Boolean> to_list() const
+  {
+    auto n = DDS_BooleanSeq_get_length(it);
+    DDS_Boolean *temp = new DDS_Boolean[n];
+    std::vector<DDS_Boolean> result;
+    result.resize(n);
+    DDS_BooleanSeq_to_array(it, temp, n);
+    for (int i = 0; i < n; i++)
+    {
+      result[i] = temp[i];
+    }
+    delete[] temp;
+    return result;
+  }
 
-// DECLARE_SEQ_WRAPPER(BooleanSeq, DDS_BooleanSeq, DDS_Boolean)
+private:
+  DDS_BooleanSeq *it{nullptr};
+};
+inline void init_BooleanSeq(py::module_ &m)
+{
+  py::class_<BooleanSeqPy>(m, "BooleanSeq")
+      .def(py::init<>())
+      .def("to_list", &BooleanSeqPy::to_list,
+           "Convert to a Python list");
+};
 DECLARE_SEQ_WRAPPER(OctetSeq, DDS_OctetSeq, DDS_Octet)
 DECLARE_SEQ_WRAPPER(ShortSeq, DDS_ShortSeq, DDS_Short)
 DECLARE_SEQ_WRAPPER(UShortSeq, DDS_UShortSeq, DDS_UShort)

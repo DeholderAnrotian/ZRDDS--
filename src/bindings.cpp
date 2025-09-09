@@ -6,10 +6,12 @@
 #include "DomainParticipantFactoryPy.h"
 #include "DomainParticipantPy.h"
 #include "TopicPy.h"
+#include "TopicDescriptionPy.h"
 #include "SubscriberPy.h"
 #include "PublisherPy.h"
 #include "DataReaderPy.h"
-// #include "DataWriterPy.h"
+#include "DataWriterPy.h"
+#include "SampleInfoPy.h"
 
 #include "SeqPy.h"
 #include "QosPy.h"
@@ -29,27 +31,15 @@ PYBIND11_MODULE(zrdds_python, m)
   init_DomainParticipantFactory(m);
   init_DomainParticipant(m);
 
+  init_TopicDescription(m);
   init_Topic(m);
-  
+
   init_DataReader(m);
-  // init_DataWriter(m);
+  init_DataWriter(m);
   init_Subscriber(m);
-  // init_Publisher(m);
+  init_Publisher(m);
+  init_SampleInfo(m);
 
   init_Seq(m);
   init_Qos(m);
 }
-
-// #include "DomainParticipantQosPy.h"
-// #include "PublisherQosPy.h"
-// #include "DataReaderQosPy.h"
-// #include "SubscriberQosPy.h"
-// #include "DataWriterQosPy.h"
-// #include "TopicQosPy.h"
-
-// init_DomainParticipantQos(m);
-// init_DataReaderQos(m);
-// init_DataWriterQos(m);
-// init_SubscriberQos(m);
-// init_PublisherQos(m);
-// init_TopicQos(m);

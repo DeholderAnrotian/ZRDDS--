@@ -8,23 +8,11 @@ namespace py = pybind11;
   class SEQNAME##Py                                                         \
   {                                                                         \
   public:                                                                   \
-    /* 默认构造：自动初始化 DDS 序列 */                                     \
-    SEQNAME##Py()                                                           \
-    {                                                                       \
-      DDS_SEQ_TYPE##_initialize(&seq_);                                     \
-      it = &seq_;                                                           \
-    }                                                                       \
+    SEQNAME##Py() { DDS_SEQ_TYPE##_initialize(it); }                        \
                                                                             \
-    /* 包装已有的 DDS_SEQ_TYPE* */                                          \
-    explicit SEQNAME##Py(DDS_SEQ_TYPE *input) : it(input), owns_(false) {}  \
+    explicit SEQNAME##Py(DDS_SEQ_TYPE *input) : it(input) {}                \
                                                                             \
-    ~SEQNAME##Py()                                                          \
-    {                                                                       \
-      if (owns_)                                                            \
-      {                                                                     \
-        DDS_SEQ_TYPE##_finalize(&seq_);                                     \
-      }                                                                     \
-    }                                                                       \
+    ~SEQNAME##Py() {}                                                       \
                                                                             \
     DDS_SEQ_TYPE *raw() const { return it; }                                \
                                                                             \
@@ -40,9 +28,7 @@ namespace py = pybind11;
     }                                                                       \
                                                                             \
   private:                                                                  \
-    DDS_SEQ_TYPE seq_{}; /* 内部序列 */                                     \
-    DDS_SEQ_TYPE *it{nullptr};                                              \
-    bool owns_{true};                                                       \
+    DDS_SEQ_TYPE *it;                                                       \
   };                                                                        \
                                                                             \
   inline void init_##SEQNAME(py::module_ &m)                                \

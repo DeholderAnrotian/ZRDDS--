@@ -29,6 +29,15 @@ SubscriberPy *DPPy::create_subscriber(const SubscriberQosPy &qoslist,
   Subscribers.insert(newSubscriberPy);
   return newSubscriberPy;
 }
+PublisherPy *DPPy::create_publisher(const PublisherQosPy &qoslist,
+                                    // PublisherListener *a_listener,
+                                    const StatusKindMaskEnum &mask)
+{
+  DDS::Publisher *pub = it->create_publisher(*qoslist.raw(), nullptr, getMask(mask));
+  PublisherPy *newPublisherPy = new PublisherPy(pub);
+  Publishers.insert(newPublisherPy);
+  return newPublisherPy;
+}
 
 DDS::ReturnCode_t DPPy::delete_contained_entities()
 {
@@ -58,5 +67,6 @@ void init_DomainParticipant(py::module_ &m)
            py::arg("mask"),
            "Create a Topic")
       .def("create_subscriber", &DPPy::create_subscriber, "Create a Subscriber")
+      .def("create_publisher", &DPPy::create_publisher, "Create a Publisher")
       .def("delete_contained_entities", &DPPy::delete_contained_entities, "Delete all contained entities");
 }

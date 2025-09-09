@@ -19,14 +19,26 @@ DRPy *SubscriberPy::create_datareader(TDPy *a_topic,
   return newDRPy;
 }
 
+DDS::ReturnCode_t SubscriberPy::delete_datareader(DRPy *reader)
+{
+  DDS::ReturnCode_t ret = it->delete_datareader(reader->raw());
+  DataReaders.erase(reader);
+  return ret;
+}
+
 void init_Subscriber(py::module_ &m)
 {
   py::class_<SubscriberPy>(m, "Subscriber")
+      .def(py::init<DDS::Subscriber *>(), py::arg("subscriber"))
       .def("create_datareader",
            &SubscriberPy::create_datareader,
            py::arg("a_topic"),
            py::arg("qos"),
            // py::arg("a_listener") = py::none(),
            py::arg("mask"),
-           "Create a DataReader");
+           "Create a DataReader with the given parameters")
+      .def("delete_datareader",
+           &SubscriberPy::delete_datareader,
+           py::arg("reader"),
+           "Delete a DataReader");
 }

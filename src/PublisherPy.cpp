@@ -1,53 +1,41 @@
+#include "Aliases.h"
 #include "PublisherPy.h"
-#include "StatusKindMaskEnum.h"
 
-PublisherPy::PublisherPy(DDS::Publisher *publisher)
-    : publisher(publisher) {}
+PublisherPy::PublisherPy(DDS::Publisher *inputPublisher)
+    : it(inputPublisher) {}
 
-PublisherPy::~PublisherPy()
+PublisherPy::~PublisherPy() {}
+
+DDS::Publisher *PublisherPy::raw() const { return it; }
+
+DWPy *PublisherPy::create_datawriter(TopicPy *a_topic,
+                                     const DWQPy &qoslist,
+                                     // DDS::DataWriterListener* a_listener,
+                                     const StatusKindMaskEnum &mask)
 {
-  // Publisher 的生命周期通常由 DomainParticipant 管理?
-}
-
-DDS::Publisher *PublisherPy::raw() const
-{
-  return publisher;
-}
-
-DataWriterPy *PublisherPy::create_datawriter(
-    DDS::Topic *the_topic,
-    const PublisherQosPy &qos,
-    // DDS::DataWriterListener* a_listener,
-    const StatusKindMaskEnum &mask)
-{
-  DDS::DataWriter *writer = publisher->create_datawriter(
-      the_topic,
-      *qos->raw(), // getPublisherQos(qos),
-      nullptr,
-      getMask(mask));
-  if (!writer)
-  {
-    throw std::runtime_error("Failed to create DataWriter");
-  }
-  return new DataWriterPy(writer);
+  DDS::DataWriter *dw = it->create_datawriter(a_topic->raw(), *qoslist.raw(), nullptr, getMask(mask));
+  DWPy *newDWPy = new DWPy(dw);
+  DataWriters.insert(newDWPy);
+  return newDWPy;
 }
 
 DDS::ReturnCode_t PublisherPy::delete_datawriter(DataWriterPy *writer)
 {
-  DDS::ReturnCode_t ret = publisher->delete_datawriter(writer->raw());
-  delete writer;
+  DDS::ReturnCode_t ret = it->delete_datawriter(writer->raw());
+  DataWriters.erase(writer);
   return ret;
 }
 
 void init_Publisher(py::module_ &m)
 {
   py::class_<PublisherPy>(m, "Publisher")
+      .def(py::init<DDS::Publisher *>(), py::arg("publisher"))
       .def("create_datawriter",
            &PublisherPy::create_datawriter,
-           py::arg("topic"),
-           py::arg("qos") = py::cast(PublisherQosEnum::PUBLISHER_QOS_DEFAULT_ENUM),
-           py::arg("a_listener") = py::none(),
-           py::arg("mask") = py::cast(StatusKindMaskEnum::STATUS_MASK_NONE_ENUM),
+           py::arg("a_topic"),
+           py::arg("qoslist"),
+           //py::arg("a_listener") = py::none(),
+           py::arg("mask"),
            "Create a DataWriter with the given parameters")
       .def("delete_datawriter",
            &PublisherPy::delete_datawriter,

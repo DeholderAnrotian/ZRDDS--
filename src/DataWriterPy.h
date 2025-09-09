@@ -10,17 +10,17 @@ namespace py = pybind11;
 
 class DataWriterPy {
 public:
-    DataWriterPy(DDS::DataWriter* writer);
+    DataWriterPy(DDS::DataWriter* it);
     ~DataWriterPy();
 
     DDS::DataWriter* raw() const;
 
-    virtual DDS::ReturnCode_t write(py::object obj); 
+    DDS::ReturnCode_t write(DDS_LongLong data); 
 
     inline bool str_equal(const char* a, const char* b);
     
 private:
-    DDS::DataWriter* writer;
+    DDS::DataWriter* it;
 };
 
 void init_DataWriter(py::module_ &m);

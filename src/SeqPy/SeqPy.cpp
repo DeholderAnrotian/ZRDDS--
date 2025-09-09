@@ -2,7 +2,7 @@
 
 void init_Seq(pybind11::module_ &m)
 {
-  // init_BooleanSeq(m);
+  init_BooleanSeq(m);
   init_OctetSeq(m);
   init_ShortSeq(m);
   init_UShortSeq(m);

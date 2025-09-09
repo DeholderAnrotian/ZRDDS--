@@ -4,6 +4,7 @@
 #include "TopicPy.h"
 #include "QosPy.h"
 #include "SubscriberPy.h"
+#include "PublisherPy.h"
 #include "StatusKindMaskEnum.h"
 #include <set>
 
@@ -27,6 +28,9 @@ public:
   SubscriberPy *create_subscriber(const SubscriberQosPy &qoslist,
                                   // SubscriberListener *a_listener,
                                   const StatusKindMaskEnum &mask);
+  PublisherPy *create_publisher(const PublisherQosPy &qoslist,
+                                // PublisherListener *a_listener,
+                                const StatusKindMaskEnum &mask);
 
   DDS::ReturnCode_t delete_contained_entities();
 
@@ -36,6 +40,8 @@ private:
   std::set<TopicPy *> Topics;
 
   std::set<SubscriberPy *> Subscribers;
+
+  std::set<PublisherPy *> Publishers;
 };
 
 void init_DomainParticipant(py::module_ &m);
