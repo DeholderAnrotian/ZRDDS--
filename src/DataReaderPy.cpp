@@ -16,8 +16,6 @@ std::tuple<DDS_LongLong, SampleInfoPy, DDS::ReturnCode_t> DataReaderPy::take_nex
 
 DDS::DataReader *DRPy::raw() const { return it; }
 
-// DDS::ReturnCode_t DRPy::take_next_sample(DDS::LongLong &data_value, SampleInfoPy &sample_info)
-
 // DDS::ReturnCode_t DRPy::read(StringSeqPy &data_values,
 //                              SampleInfoSeqPy &sample_infos,
 //                              int max_samples,
