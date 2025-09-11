@@ -1,6 +1,5 @@
 from build.Release import zrdds_python as zrpy
 import time
-import ctypes
 # if(zrpy.DomainParticipantFactory.get_instance() == None):
 #   print("get instance failed\n")
 # else:
@@ -8,6 +7,11 @@ import ctypes
 
 # print(zrpy.DomainParticipantFactory.get_instance())
 # print(zrpy.DomainParticipantFactory.finalize_instance())
+
+class tListener (zrpy.DataReaderListener):
+  def on_data_available(self):
+        print("Data available!")
+
 
 factory = zrpy.DomainParticipantFactory.get_instance()
 print(factory)
@@ -22,11 +26,14 @@ print(topic)
 
 subscriber= participant.create_subscriber(zrpy.SubscriberQos.getDefault(),zrpy.StatusKindMask.STATUS_MASK_NONE)
 
-dataReader= subscriber.create_datareader(topic,zrpy.DataReaderQos.getDefault(),zrpy.StatusKindMask.STATUS_MASK_NONE)
+listener= tListener()
+print(listener)
+dataReader= subscriber.create_datareader(topic,zrpy.DataReaderQos.getDefault(),None,zrpy.StatusKindMask.STATUS_MASK_ALL)
 print(dataReader)
 
-LongLongData=ctypes.c_longlong(10)
-SampleInfo=zrpy.SampleInfo()
+# while True:
+#   time.sleep(1)
+#   print("等待数据中...")
 
 while True:
   LongLongData,SampleInfo,retcode = dataReader.take_next_sample()

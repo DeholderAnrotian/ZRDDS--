@@ -57,7 +57,7 @@ DDS::ReturnCode_t DPPy::delete_contained_entities()
 void init_DomainParticipant(py::module_ &m)
 {
   py::class_<DPPy>(m, "DomainParticipant")
-      .def(py::init<DDS::DomainParticipant *>(), py::arg("intputDomainParticipant"))
+      // .def(py::init<DDS::DomainParticipant *>(), py::arg("intputDomainParticipant"))
       .def("create_topic",
            &DPPy::create_topic,
            py::arg("topic_name"),
