@@ -29,7 +29,7 @@ DDS::ReturnCode_t PublisherPy::delete_datawriter(DataWriterPy *writer)
 void init_Publisher(py::module_ &m)
 {
   py::class_<PublisherPy>(m, "Publisher")
-      .def(py::init<DDS::Publisher *>(), py::arg("publisher"))
+      // .def(py::init<DDS::Publisher *>(), py::arg("publisher"))
       .def("create_datawriter",
            &PublisherPy::create_datawriter,
            py::arg("a_topic"),
