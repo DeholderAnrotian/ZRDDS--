@@ -10,7 +10,8 @@
 #include "ReturnCode_t.h"
 #include <tuple>
 #include "SampleInfo.h"
-
+#include <ZRBuiltinTypesDataReader.h>
+#include <iostream>
 namespace py = pybind11;
 
 class DataReaderPy
@@ -22,7 +23,9 @@ public:
 
   DDS::DataReader *raw() const;
 
-  std::tuple<DDS_LongLong, SampleInfoPy, DDS::ReturnCode_t> DataReaderPy::take_next_sample();
+  std::tuple<py::object, SampleInfoPy, DDS::ReturnCode_t> DataReaderPy::take_next_sample();
+
+  inline bool string_equal(const char* a, const char* b);
 
   // DDS::ReturnCode_t read(StringSeqPy &data_values,
   //                        SampleInfoSeqPy &sample_infos,
@@ -39,7 +42,7 @@ public:
   //                        InstanceStateMaskEnum instance_mask);
 
 private:
-  DDS::DataReader *it;
+  DDS::DataReader *reader;
 };
 
 void init_DataReader(py::module_ &m);

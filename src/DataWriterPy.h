@@ -5,7 +5,8 @@
 #include <DataWriter.h>
 #include <ZRDDSDataWriter.h>
 #include <ZRBuiltinTypesDataWriter.h>
-
+#include <ZRBuiltinTypes.h> 
+#include "KeyedBytesPy.h"
 namespace py = pybind11;
 
 class DataWriterPy {
@@ -15,12 +16,12 @@ public:
 
     DDS::DataWriter* raw() const;
 
-    DDS::ReturnCode_t write(DDS_LongLong data); 
+    DDS::ReturnCode_t write(py::object obj); 
 
     inline bool str_equal(const char* a, const char* b);
     
 private:
-    DDS::DataWriter* it;
+    DDS::DataWriter* writer;
 };
 
 void init_DataWriter(py::module_ &m);

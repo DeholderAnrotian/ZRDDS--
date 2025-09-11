@@ -15,7 +15,6 @@
 #include "DataWriterPy.h"
 
 #include "SampleInfoPy.h"
-
 #include "QosPy.h"
 
 #include "DataReaderListenerPy.h"
@@ -47,4 +46,5 @@ PYBIND11_MODULE(zrdds_python, m)
   init_SampleInfo(m);
 
   init_Qos(m);
+  init_KeyedBytes(m);
 }
