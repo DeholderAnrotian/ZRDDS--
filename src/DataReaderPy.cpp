@@ -1737,7 +1737,6 @@ std::tuple<py::list, py::list, DDS::ReturnCode_t> DataReaderPy::read(
 DDS::DataReader *DRPy::raw() const { return reader; }
 
 
-
 void init_DataReader(py::module_ &m)
 {
   py::class_<DRPy>(m, "DataReader")
