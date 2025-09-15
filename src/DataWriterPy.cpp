@@ -116,9 +116,53 @@ DDS::ReturnCode_t DataWriterPy::write(py::object obj)
       return DDS::RETCODE_UNSUPPORTED;
     }
   }
-  catch (std::exception &e)
+
+  else if (str_equal(type_name, "DDS_KeyedString"))
   {
-    std::cerr << "Exception in write " << e.what() << std::endl;
+      auto typed = dynamic_cast<DDS::KeyedStringDataWriter *>(writer);
+      if (!typed)
+          throw std::runtime_error("Writer type mismatch for KeyedString");
+
+      KeyedStringPy &ks = obj.cast<KeyedStringPy&>();
+      DDS_KeyedString data = ks.to_dds();
+
+      DDS::ReturnCode_t ret = typed->write(data, DDS::HANDLE_NIL_NATIVE);
+
+        // 释放动态分配的内存
+      KeyedStringPy::string_free(data.key);
+      KeyedStringPy::string_free(data.value);
+
+      return ret;
+  }
+
+
+  else if (str_equal(type_name, "DDS_KeyedBytes"))
+  {
+      auto typed = dynamic_cast<DDS::KeyedBytesDataWriter *>(writer);
+      if (!typed)
+          throw std::runtime_error("Writer type mismatch for KeyedBytes");
+
+      // 从 Python 对象获取 KeyedBytesPy
+      KeyedBytesPy &kb = obj.cast<KeyedBytesPy&>();
+
+      // 转换成 DDS_KeyedBytes
+      DDS_KeyedBytes data = kb.to_dds();
+
+      // 写入
+      DDS::ReturnCode_t ret = typed->write(data, DDS::HANDLE_NIL_NATIVE);
+
+      // 释放 key
+      delete[] data.key;
+
+      // 释放 value
+      DDS_OctetSeq_finalize(&data.value);
+
+      return ret;
+  }
+
+  else
+  {
+    throw std::runtime_error(std::string("Unsupported type: ") + type_name);
   }
 }
 

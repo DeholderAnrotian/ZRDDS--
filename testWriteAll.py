@@ -18,7 +18,7 @@ def main():
 
     # 定义所有要测试的类型
     type_list = [
-        ("TOPIC_OCTET", "DDS_Octet", 0x12),
+         ("TOPIC_OCTET", "DDS_Octet", 0x12),
         ("TOPIC_BOOLEAN", "DDS_Boolean", True),
         ("TOPIC_SHORT", "DDS_Short", -123),
         ("TOPIC_USHORT", "DDS_UShort", 456),
@@ -28,9 +28,10 @@ def main():
         ("TOPIC_ULONGLONG", "DDS_ULongLong", 9876543210),
         ("TOPIC_FLOAT", "DDS_Float", 3.14),
         ("TOPIC_DOUBLE", "DDS_Double", 2.718281828),
-        ("TOPIC_STRING", "DDS_String", "Hello DDS String"),
+        ("TOPIC_STRING", "DDS_String", "a"*10),
         ("TOPIC_BYTES", "DDS_Bytes", b"\x01\x02\x03\x04HelloDDS"),
-        #("TOPIC_KEYEDBYTES", "DDS_KeyedBytes", zrpy.KeyedBytes("mykey".encode("utf-8"), b"this is test data")),
+        # ("TOPIC_KEYEDSTRING", "DDS_KeyedString", zrpy.KeyedString("myKey", "Hello KeyedString")),
+        # ("TOPIC_KEYEDBYTES", "DDS_KeyedBytes", zrpy.KeyedBytes("myKey", b"\x01\x02\x03\x04HelloDDS")),
     ]
 
     writers = {}
@@ -71,6 +72,8 @@ def main():
             ret = writer.write(data)
             if ret == zrpy.ReturnCode_t.RETCODE_OK:
                 if type_name == "DDS_KeyedBytes":
+                    print(f"Write {type_name}: key={data.get_key()}, value={data.get_value()}")
+                if(type_name == "DDS_KeyedString"):
                     print(f"Write {type_name}: key={data.get_key()}, value={data.get_value()}")
                 else:
                     print(f"Write {type_name}: {data}")
