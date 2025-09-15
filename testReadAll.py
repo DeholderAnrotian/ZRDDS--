@@ -25,7 +25,7 @@ def main():
 
     # 所有测试类型
     type_list = [
-        ("TOPIC_OCTET", "DDS_Octet"),
+         ("TOPIC_OCTET", "DDS_Octet"),
         ("TOPIC_BOOLEAN", "DDS_Boolean"),
         ("TOPIC_SHORT", "DDS_Short"),
         ("TOPIC_USHORT", "DDS_UShort"),
@@ -37,6 +37,7 @@ def main():
         ("TOPIC_DOUBLE", "DDS_Double"),
         ("TOPIC_STRING", "DDS_String"),
         ("TOPIC_BYTES", "DDS_Bytes"),
+        # ("TOPIC_KEYEDSTRING", "DDS_KeyedString"),
         # ("TOPIC_KEYEDBYTES", "DDS_KeyedBytes"),
     ]
 
@@ -59,27 +60,37 @@ def main():
         readers[type_name] = reader
         print(f"✅ Created DataReader for {type_name}")
 
-    # 循环读取数据
     while True:
         for type_name, reader in readers.items():
-            data, sample_info, retcode = reader.take_next_sample()
-            if retcode == zrpy.ReturnCode_t.RETCODE_OK and sample_info.valid_data():
-                if type_name == "DDS_KeyedBytes":
-                    print(f"[{type_name}] 收到: key={data.get_key()}, value={data.get_value()}")
+            try:
+                data, sample_info, retcode = reader.read_next_sample()
+                if retcode == zrpy.ReturnCode_t.RETCODE_OK and sample_info.valid_data():
+                    if type_name == "DDS_KeyedBytes":
+                        try:
+                            print(f"[{type_name}] 收到: key={data.get_key()}, value={data.get_value()}")
+                        except Exception as e:
+                            print(f"[{type_name}] KeyedBytes 打印异常: {e}")
+                    elif type_name == "DDS_KeyedString":
+                        try:
+                            print(f"[{type_name}] 收到: key={data.get_key()}, value={data.get_value()}", data, retcode)
+                        except Exception as e:
+                            print(f"[{type_name}] KeyedString 打印异常: {e}")
+                    else:
+                        print(f"[{type_name}] 收到: {data}", data, retcode)
+                elif retcode == zrpy.ReturnCode_t.RETCODE_NO_DATA:
+                    print(f"[{type_name}] 暂时没有数据")
                 else:
-                    print(f"[{type_name}] 收到: {data}")
-            elif retcode == zrpy.ReturnCode_t.RETCODE_NO_DATA:
-                print("暂时没有数据")
-            else:
-                print(f"[{type_name}] 读取错误: {retcode}")
+                    print(f"[{type_name}] 读取错误: {retcode}")
+            except Exception as e:
+                print(f"[Reader Exception] {type_name}: {e}")
 
         time.sleep(0.5)
 
-    # # 清理资源（实际循环里可能不会到这里，可手动中断）
-    # participant.delete_contained_entities()
-    # factory.delete_participant(participant)
-    # zrpy.DomainParticipantFactory.finalize_instance()
-    
+
+    def on_exit():
+        print(">>> Reader exiting <<<")
+
+    atexit.register(on_exit)
 
 if __name__ == "__main__":
     main()
