@@ -22,7 +22,7 @@ public:
 
   DomainParticipantPy *create_participant(const unsigned int &domain_id,
                                                   const DomainParticipantQosPy &qos,
-                                                  // DDS::DomainParticipantListener *a_listener,
+                                                  DDS::DomainParticipantListener *a_listener,
                                                   const StatusKindMaskEnum &mask);
 
   DDS::ReturnCode_t delete_participant(DomainParticipantPy *a_dp);

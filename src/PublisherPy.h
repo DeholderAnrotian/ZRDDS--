@@ -22,7 +22,7 @@ public:
   // 封装常用方法
   DataWriterPy *create_datawriter(TopicPy *the_topic,
                                   const DataWriterQosPy &qoslist,
-                                  // DDS::DataWriterListener* a_listener,
+                                  DDS::DataWriterListener* a_listener,
                                   const StatusKindMaskEnum &mask);
 
   DDS::ReturnCode_t delete_datawriter(DataWriterPy *writer);

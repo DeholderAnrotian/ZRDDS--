@@ -22,14 +22,14 @@ public:
   TopicPy *create_topic(const char *topic_name,
                         const char *type_name,
                         const TopicQosPy &qoslist,
-                        // DDS::TopicListener *a_listener,
+                        DDS::TopicListener *a_listener,
                         const StatusKindMaskEnum &mask);
 
   SubscriberPy *create_subscriber(const SubscriberQosPy &qoslist,
-                                  // SubscriberListener *a_listener,
+                                  SubscriberListener *a_listener,
                                   const StatusKindMaskEnum &mask);
   PublisherPy *create_publisher(const PublisherQosPy &qoslist,
-                                // PublisherListener *a_listener,
+                                PublisherListener *a_listener,
                                 const StatusKindMaskEnum &mask);
 
   DDS::ReturnCode_t delete_contained_entities();

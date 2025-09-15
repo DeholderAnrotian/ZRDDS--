@@ -25,7 +25,7 @@ public:
 
   std::tuple<py::object, SampleInfoPy, DDS::ReturnCode_t> DataReaderPy::take_next_sample();
 
-  inline bool string_equal(const char* a, const char* b);
+  // inline bool string_equal(const char *a, const char *b);
 
   // DDS::ReturnCode_t read(StringSeqPy &data_values,
   //                        SampleInfoSeqPy &sample_infos,
@@ -42,7 +42,8 @@ public:
   //                        InstanceStateMaskEnum instance_mask);
 
 private:
-  DDS::DataReader *reader;
+  DDS::DataReader *it;
+  std::string type_name;
 };
 
 void init_DataReader(py::module_ &m);

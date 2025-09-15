@@ -11,7 +11,7 @@ DDS::DomainParticipant *DPPy::raw() const { return it; }
 TopicPy *DPPy::create_topic(const char *topic_name,
                             const char *type_name,
                             const TQPy &qoslist,
-                            // DDS::TopicListener *a_listener,
+                            DDS::TopicListener *a_listener,
                             const StatusKindMaskEnum &mask)
 {
   DDS::Topic *tp = it->create_topic(topic_name, type_name, *qoslist.raw(), nullptr, getMask(mask));
@@ -21,7 +21,7 @@ TopicPy *DPPy::create_topic(const char *topic_name,
 }
 
 SubscriberPy *DPPy::create_subscriber(const SubscriberQosPy &qoslist,
-                                      // SubscriberListener *a_listener,
+                                      SubscriberListener *a_listener,
                                       const StatusKindMaskEnum &mask)
 {
   DDS::Subscriber *sub = it->create_subscriber(*qoslist.raw(), nullptr, getMask(mask));
@@ -30,7 +30,7 @@ SubscriberPy *DPPy::create_subscriber(const SubscriberQosPy &qoslist,
   return newSubscriberPy;
 }
 PublisherPy *DPPy::create_publisher(const PublisherQosPy &qoslist,
-                                    // PublisherListener *a_listener,
+                                    PublisherListener *a_listener,
                                     const StatusKindMaskEnum &mask)
 {
   DDS::Publisher *pub = it->create_publisher(*qoslist.raw(), nullptr, getMask(mask));
@@ -63,10 +63,20 @@ void init_DomainParticipant(py::module_ &m)
            py::arg("topic_name"),
            py::arg("type_name"),
            py::arg("qos"),
-           // py::arg("a_listener") = py::none(),
+           py::arg("a_listener") = py::none(),
            py::arg("mask"),
            "Create a Topic")
-      .def("create_subscriber", &DPPy::create_subscriber, "Create a Subscriber")
-      .def("create_publisher", &DPPy::create_publisher, "Create a Publisher")
+      .def("create_subscriber",
+           &DPPy::create_subscriber,
+           py::arg("qos"),
+           py::arg("a_listener"),
+           py::arg("mask"),
+           "Create a Subscriber")
+      .def("create_publisher",
+           &DPPy::create_publisher,
+           py::arg("qos"),
+           py::arg("a_listener"),
+           py::arg("mask"),
+           "Create a Publisher")
       .def("delete_contained_entities", &DPPy::delete_contained_entities, "Delete all contained entities");
 }
