@@ -1,48 +1,63 @@
 #include "KeyedBytesPy.h"
 
 
-KeyedBytesPy::KeyedBytesPy(const std::string& key, const py::bytes& py_value) {
-    // 复制 key(直接赋值会报错)
-    char* buf = new char[key.size() + 1];  // +1 终止符
-    std::memcpy(buf, key.c_str(), key.size() + 1);
-    data.key = buf;
-    DDS_OctetSeq_from_array(&data.value, buffer, length);
+KeyedBytesPy::KeyedBytesPy(const std::string& key, const py::bytes& value)
+    : key_(key), value_(value)
+{
+    std::cout << "[KeyedBytesPy] Constructor called (key=" << key_ << ")" << std::endl;
+}
 
-    // 初始化 value
-    DDS_OctetSeq_initialize(&data.value);
+KeyedBytesPy::KeyedBytesPy(const DDS_KeyedBytes& data) {
+    if (data.key)
+        key_ = std::string(data.key);
+    else
+        key_ = "";
 
-    // 保存 Python bytes 数据
-    value_holder = static_cast<std::string>(py_value);
+    if (DDS_OctetSeq_get_length(&data.value) > 0) {
+        int len = DDS_OctetSeq_get_length(&data.value);
+        DDS_Octet* buf = DDS_OctetSeq_get_contiguous_buffer(&data.value);
+        value_ = py::bytes(reinterpret_cast<const char*>(buf), len);
+    } else {
+        value_ = py::bytes("");
+    }
 
-    // 借用内存
-    DDS_Octet* buffer = reinterpret_cast<DDS_Octet*>(const_cast<char*>(value_holder.data()));
-    DDS_OctetSeq_loan_contiguous(&data.value, buffer, value_holder.size(), value_holder.size());
+    std::cout << "[KeyedBytesPy] Constructed from DDS_KeyedBytes" << std::endl;
 }
 
 KeyedBytesPy::~KeyedBytesPy() {
-    if (data.key) {
-        delete[] data.key;
-    }
-    DDS_OctetSeq_finalize(&data.value);
+    std::cout << "[KeyedBytesPy] Destructor called" << std::endl;
 }
 
-std::string KeyedBytesPy::get_key() const {
-    return data.key ? std::string(data.key) : "";
-}
+std::string KeyedBytesPy::get_key() const { return key_; }
+py::bytes KeyedBytesPy::get_value() const { return value_; }
 
-py::bytes KeyedBytesPy::get_value() const {
-    return py::bytes(value_holder);
-}
+void KeyedBytesPy::set_key(const std::string& k) { key_ = k; }
+void KeyedBytesPy::set_value(const py::bytes& v) { value_ = v; }
 
-DDS_KeyedBytes* KeyedBytesPy::get_dds_data() {
-    return &data;
-}
+DDS_KeyedBytes KeyedBytesPy::to_dds() const {
+    DDS_KeyedBytes data;
 
+    // key
+    char* kbuf = new char[key_.size() + 1];
+    std::memcpy(kbuf, key_.c_str(), key_.size() + 1);
+    data.key = kbuf;
+
+    // value
+    std::string val_str = static_cast<std::string>(value_);
+    DDS_OctetSeq_initialize(&data.value);
+    DDS_Octet* buf = reinterpret_cast<DDS_Octet*>(const_cast<char*>(val_str.data()));
+    DDS_OctetSeq_loan_contiguous(&data.value, buf, (int)val_str.size(), (int)val_str.size());
+
+    return data;
+}
 // -------------------- pybind11 绑定 --------------------
 void init_KeyedBytes(py::module_ &m) {
     py::class_<KeyedBytesPy>(m, "KeyedBytes")
         .def(py::init<const std::string&, const py::bytes&>(),
              py::arg("key"), py::arg("value"))
         .def("get_key", &KeyedBytesPy::get_key)
-        .def("get_value", &KeyedBytesPy::get_value);
+        .def("get_value", &KeyedBytesPy::get_value)
+        .def("set_key", &KeyedBytesPy::set_key)
+        .def("set_value", &KeyedBytesPy::set_value)
+        .def("to_dds", &KeyedBytesPy::to_dds);
 }

@@ -126,41 +126,50 @@ DDS::ReturnCode_t DataWriterPy::write(py::object obj)
     return ret;
 
   }
-  else if(str_equal(type_name, "DDS_KeyedBytes"))
+
+  else if (str_equal(type_name, "DDS_KeyedString"))
   {
-    auto typed = dynamic_cast<DDS::KeyedBytesDataWriter *>(writer);
-    if (!typed)
-      throw std::runtime_error("Writer type mismatch for KeyedBytes");
+      auto typed = dynamic_cast<DDS::KeyedStringDataWriter *>(writer);
+      if (!typed)
+          throw std::runtime_error("Writer type mismatch for KeyedString");
 
-    // 构造 DDS_KeyedBytes
-    DDS_KeyedBytes data;
+      KeyedStringPy &ks = obj.cast<KeyedStringPy&>();
+      DDS_KeyedString data = ks.to_dds();
 
-    // 从 Python 对象取出 KeyedBytesPy
-    KeyedBytesPy &kb = obj.cast<KeyedBytesPy&>();
+      DDS::ReturnCode_t ret = typed->write(data, DDS::HANDLE_NIL_NATIVE);
 
-    // --- 处理 key ---
-    const std::string key_str = kb.get_key();
-    char* key_buf = new char[key_str.size() + 1];
-    std::memcpy(key_buf, key_str.c_str(), key_str.size() + 1);
-    data.key = key_buf;
+        // 释放动态分配的内存
+      KeyedStringPy::string_free(data.key);
+      KeyedStringPy::string_free(data.value);
 
-   // --- 处理 value ---
-    py::bytes py_bytes = kb.get_value();
-    std::string value_str = static_cast<std::string>(py_bytes);
-
-    DDS_Octet* buffer = reinterpret_cast<DDS_Octet*>(const_cast<char*>(value_str.data()));
-    int length = static_cast<int>(value_str.size());
-    DDS_OctetSeq_initialize(&data.value);
-    DDS_OctetSeq_loan_contiguous(&data.value, buffer, length, length);
-
-    // 写入
-    DDS::ReturnCode_t ret = typed->write(data, DDS::HANDLE_NIL_NATIVE);
-
-    delete[] data.key;
-    DDS_OctetSeq_finalize(&data.value);
-
-    return ret;
+      return ret;
   }
+
+
+  else if (str_equal(type_name, "DDS_KeyedBytes"))
+  {
+      auto typed = dynamic_cast<DDS::KeyedBytesDataWriter *>(writer);
+      if (!typed)
+          throw std::runtime_error("Writer type mismatch for KeyedBytes");
+
+      // 从 Python 对象获取 KeyedBytesPy
+      KeyedBytesPy &kb = obj.cast<KeyedBytesPy&>();
+
+      // 转换成 DDS_KeyedBytes
+      DDS_KeyedBytes data = kb.to_dds();
+
+      // 写入
+      DDS::ReturnCode_t ret = typed->write(data, DDS::HANDLE_NIL_NATIVE);
+
+      // 释放 key
+      delete[] data.key;
+
+      // 释放 value
+      DDS_OctetSeq_finalize(&data.value);
+
+      return ret;
+  }
+
   else
   {
     throw std::runtime_error(std::string("Unsupported type: ") + type_name);

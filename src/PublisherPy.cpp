@@ -8,12 +8,10 @@ PublisherPy::~PublisherPy() {}
 
 DDS::Publisher *PublisherPy::raw() const { return it; }
 
-DWPy *PublisherPy::create_datawriter(TopicPy *a_topic,
-                                     const DWQPy &qoslist,
-                                     // DDS::DataWriterListener* a_listener,
-                                     const StatusKindMaskEnum &mask)
+
+DataWriterPy *PublisherPy::create_datawriter(TopicPy *the_topic, const DataWriterQosPy &qoslist, const StatusKindMaskEnum &mask)
 {
-  DDS::DataWriter *dw = it->create_datawriter(a_topic->raw(), *qoslist.raw(), nullptr, getMask(mask));
+  DDS::DataWriter *dw = it->create_datawriter(the_topic->raw(), *qoslist.raw(), nullptr, getMask(mask));
   DWPy *newDWPy = new DWPy(dw);
   DataWriters.insert(newDWPy);
   return newDWPy;

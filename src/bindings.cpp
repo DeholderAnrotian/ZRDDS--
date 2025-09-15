@@ -13,6 +13,7 @@
 #include "DataWriterPy.h"
 #include "SampleInfoPy.h"
 #include "KeyedBytesPy.h"
+#include "KeyedStringPy.h"
 #include "SeqPy.h"
 #include "QosPy.h"
 
@@ -43,4 +44,5 @@ PYBIND11_MODULE(zrdds_python, m)
   init_Seq(m);
   init_Qos(m);
   init_KeyedBytes(m);
+  init_KeyedString(m);
 }

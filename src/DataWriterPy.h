@@ -7,6 +7,7 @@
 #include <ZRBuiltinTypesDataWriter.h>
 #include <ZRBuiltinTypes.h> 
 #include "KeyedBytesPy.h"
+#include "KeyedStringPy.h"
 namespace py = pybind11;
 
 class DataWriterPy {
